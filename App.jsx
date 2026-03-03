@@ -5,7 +5,7 @@ import {
   Star, Wallet, Home, BarChart, Zap, Headphones, Shield, Bot
 } from 'lucide-react';
 
-// --- STYLES PERSONNALISÉS (Animations) ---
+// --- STYLES PERSONNALISÉS (Animations & Safe Areas) ---
 const customStyles = `
   @keyframes float {
     0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -32,13 +32,21 @@ const customStyles = `
   }
   .typing-dot:nth-child(1) { animation-delay: -0.32s; }
   .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+  /* Gestion des zones sûres pour les encoches de téléphone (Notch) */
+  .pt-safe {
+    padding-top: max(1.5rem, env(safe-area-inset-top));
+  }
+  .pb-safe {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
 `;
 
 // --- DATA ---
 const questions = [
   { id: 1, category: "Voyage", title: "Voyagez-vous régulièrement à l'étranger ?", description: "Impact : Frais de change, assurances voyage.", Icon: Plane, color: "text-blue-500" },
-  { id: 2, category: "Achats", title: "Majorité de vos achats sur internet ?", description: "Impact : Carte virtuelle, protection achats.", Icon: ShoppingCart, color: "text-purple-500" },
-  { id: 3, category: "Paiement", title: "Paiement via téléphone ou montre ?", description: "Impact : Priorité au digital-first.", Icon: Smartphone, color: "text-emerald-500" },
+  { id: 2, category: "Achats", title: "Est-ce que la majorité de vos achats sont sur Internet ?", description: "Impact : Carte virtuelle, protection achats.", Icon: ShoppingCart, color: "text-purple-500" },
+  { id: 3, category: "Paiement", title: "Paiement via téléphone ou montre ? (Apple Pay, Android Pay...", description: "Impact : Priorité au digital-first.", Icon: Smartphone, color: "text-emerald-500" },
   { id: 4, category: "Pro", title: "Travaillez-vous à votre compte ?", description: "Impact : Gestion pro/perso séparée.", Icon: Briefcase, color: "text-amber-600" },
   { id: 5, category: "Budget", title: "Besoin de plafonds de paiement élevés ?", description: "Impact : Type de carte, limites dynamiques.", Icon: TrendingUp, color: "text-red-500" },
   { id: 6, category: "Sécurité", title: "Alerté(e) à chaque dépense ?", description: "Impact : Notifications push instantanées.", Icon: Bell, color: "text-yellow-500" },
@@ -48,9 +56,9 @@ const questions = [
   { id: 10, category: "Préférences", title: "Aimes-tu alan le goat ?", description: "Une question de goût, mais la réponse est souvent évidente.", Icon: Star, color: "text-yellow-400" },
   { id: 11, category: "Épargne", title: "Épargnez-vous de manière systématique ?", description: "Impact : Arrondis automatiques.", Icon: Wallet, color: "text-emerald-600" },
   { id: 12, category: "Projets", title: "Achat important dans les 12 mois ?", description: "Impact : Capacité d'emprunt.", Icon: Home, color: "text-orange-500" },
-  { id: 13, category: "Investissement", title: "Investissez-vous déjà (Bourse, Crypto) ?", description: "Impact : Onglet investissement intégré.", Icon: BarChart, color: "text-indigo-600" },
+  { id: 13, category: "Investissement", title: "Investissez-vous déjà (Bourse, Crypto...) ?", description: "Impact : Onglet investissement intégré.", Icon: BarChart, color: "text-indigo-600" },
   { id: 14, category: "IA", title: "Une IA pour ajuster vos plafonds ?", description: "Impact : Automatisation selon vos habitudes.", Icon: Zap, color: "text-yellow-500" },
-  { id: 15, category: "Support", title: "Autonomie totale ou conseiller dédié ?", description: "Impact : Self-care vs Support Premium.", Icon: Headphones, color: "text-slate-600" },
+  { id: 15, category: "Support", title: "Avez-vous vraiment besoins d'un conseillez quotidient?", description: "Impact : Self-care vs Support Premium.", Icon: Headphones, color: "text-slate-600" },
   { id: 16, category: "Design", title: "Une carte physique au design exclusif ?", description: "Impact : Hardware (ex: Carte Métal).", Icon: Shield, color: "text-slate-800" }
 ];
 
@@ -174,15 +182,6 @@ const determineProfile = (answers) => {
 
 // --- COMPONENTS ---
 
-const PhoneMockup = ({ children }) => (
-  <div className="relative w-[340px] h-[700px] bg-gray-50 border-[10px] border-gray-900 rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
-    <div className="absolute top-0 inset-x-0 h-6 flex justify-center z-50 pointer-events-none">
-      <div className="w-24 h-5 bg-gray-900 rounded-b-2xl"></div>
-    </div>
-    {children}
-  </div>
-);
-
 const SwipeCard = ({ card, onSwipe }) => {
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -231,10 +230,10 @@ const SwipeCard = ({ card, onSwipe }) => {
   const { Icon, color } = card;
 
   return (
-    <div className="flex-1 relative flex flex-col pt-4 pb-8 select-none">
+    <div className="flex-1 relative flex flex-col pt-4 pb-safe select-none">
       <div className="flex-1 relative flex items-center justify-center px-6 z-20">
         <div 
-          className="w-full h-full max-h-[400px] bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex flex-col p-8 cursor-grab active:cursor-grabbing relative overflow-hidden border border-gray-100"
+          className="w-full h-full max-h-[450px] bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex flex-col p-8 cursor-grab active:cursor-grabbing relative overflow-hidden border border-gray-100"
           style={{ transform, transition, touchAction: 'none' }}
           onMouseDown={handlePointerDown}
           onMouseMove={handlePointerMove}
@@ -263,7 +262,7 @@ const SwipeCard = ({ card, onSwipe }) => {
         </div>
       </div>
 
-      <div className="pt-8 px-10 flex justify-between items-center z-10">
+      <div className="pt-8 px-10 pb-6 flex justify-between items-center z-10">
         <button onClick={() => triggerLeave('left')} className="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors border border-gray-100 active:scale-95">
           <X className="w-8 h-8" strokeWidth={3} />
         </button>
@@ -325,7 +324,7 @@ const ChatScreen = ({ answers, onComplete }) => {
 
   return (
     <div className="flex flex-col h-full bg-gray-50 z-40 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
-      <div className="pt-14 pb-4 px-6 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm z-10 flex flex-col items-center">
+      <div className="pt-safe pb-4 px-6 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm z-10 flex flex-col items-center">
         <div className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center mb-2 shadow-md">
           <Bot className="w-5 h-5" />
         </div>
@@ -333,7 +332,7 @@ const ChatScreen = ({ answers, onComplete }) => {
         <p className="text-[11px] font-medium text-emerald-500 uppercase tracking-widest mt-1">En ligne</p>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-20">
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 pb-safe">
         {messages.map((msg, idx) => (
           <div 
             key={idx} 
@@ -384,8 +383,8 @@ const EndScreen = ({ answers, onReset }) => {
   const profileName = useMemo(() => determineProfile(answers), [answers]);
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 animate-in fade-in slide-in-from-bottom-4 duration-700 p-6 pt-16 z-50">
-      <div className="flex-1 flex flex-col items-center justify-center w-full">
+    <div className="flex flex-col h-full bg-gray-50 animate-in fade-in slide-in-from-bottom-4 duration-700 p-6 pt-safe pb-safe z-50">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto">
         <h1 className="text-2xl font-extrabold text-slate-800 text-center mb-8 tracking-tight leading-tight">
           Ma carte<br />Mon expérience
         </h1>
@@ -402,7 +401,7 @@ const EndScreen = ({ answers, onReset }) => {
             </div>
           </div>
           
-          <div className="mt-auto mb-4 text-[15px] font-mono tracking-[0.15em] opacity-90 drop-shadow-md whitespace-nowrap">
+          <div className="mt-auto mb-4 text-[15px] sm:text-lg font-mono tracking-[0.15em] opacity-90 drop-shadow-md whitespace-nowrap">
             4521 8892 0034 1001
           </div>
           
@@ -475,13 +474,16 @@ export default function App() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: customStyles }} />
-      <div className="min-h-screen bg-gray-200 flex flex-col items-center justify-center py-8 px-4 font-sans">
+      {/* Conteneur principal qui s'adapte à tout l'écran */}
+      <div className="bg-gray-200 min-h-screen font-sans flex justify-center">
         
-        <PhoneMockup>
+        {/* L'application prend tout l'écran sur mobile, mais est contrainte et centrée sur un grand écran de PC */}
+        <div className="w-full max-w-md h-[100dvh] bg-gray-50 flex flex-col relative overflow-hidden sm:shadow-2xl sm:border-x border-gray-200">
           
           {phase === 'swipe' && questions[currentIndex] && (
             <>
-              <div className="pt-12 pb-2 px-6 relative z-30">
+              {/* Le header utilise "pt-safe" pour ne pas être caché sous l'encoche des téléphones */}
+              <div className="pt-safe pb-2 px-6 relative z-30">
                 <div className="flex items-center justify-between gap-4 mb-4">
                   <button 
                     onClick={handleBack}
@@ -521,8 +523,7 @@ export default function App() {
             <EndScreen answers={answers} onReset={handleReset} />
           )}
 
-        </PhoneMockup>
-
+        </div>
       </div>
     </>
   );
