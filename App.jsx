@@ -45,8 +45,8 @@ const customStyles = `
 // --- DATA ---
 const questions = [
   { id: 1, category: "Voyage", title: "Voyagez-vous régulièrement à l'étranger ?", description: "Impact : Frais de change, assurances voyage.", Icon: Plane, color: "text-blue-500" },
-  { id: 2, category: "Achats", title: "Est-ce que la majorité de vos achats sont sur Internet ?", description: "Impact : Carte virtuelle, protection achats.", Icon: ShoppingCart, color: "text-purple-500" },
-  { id: 3, category: "Paiement", title: "Paiement via téléphone ou montre ? (Apple Pay, Android Pay...", description: "Impact : Priorité au digital-first.", Icon: Smartphone, color: "text-emerald-500" },
+  { id: 2, category: "Achats", title: "Majorité de vos achats sur internet ?", description: "Impact : Carte virtuelle, protection achats.", Icon: ShoppingCart, color: "text-purple-500" },
+  { id: 3, category: "Paiement", title: "Paiement via téléphone ou montre ?", description: "Impact : Priorité au digital-first.", Icon: Smartphone, color: "text-emerald-500" },
   { id: 4, category: "Pro", title: "Travaillez-vous à votre compte ?", description: "Impact : Gestion pro/perso séparée.", Icon: Briefcase, color: "text-amber-600" },
   { id: 5, category: "Budget", title: "Besoin de plafonds de paiement élevés ?", description: "Impact : Type de carte, limites dynamiques.", Icon: TrendingUp, color: "text-red-500" },
   { id: 6, category: "Sécurité", title: "Alerté(e) à chaque dépense ?", description: "Impact : Notifications push instantanées.", Icon: Bell, color: "text-yellow-500" },
@@ -56,9 +56,9 @@ const questions = [
   { id: 10, category: "Préférences", title: "Aimes-tu alan le goat ?", description: "Une question de goût, mais la réponse est souvent évidente.", Icon: Star, color: "text-yellow-400" },
   { id: 11, category: "Épargne", title: "Épargnez-vous de manière systématique ?", description: "Impact : Arrondis automatiques.", Icon: Wallet, color: "text-emerald-600" },
   { id: 12, category: "Projets", title: "Achat important dans les 12 mois ?", description: "Impact : Capacité d'emprunt.", Icon: Home, color: "text-orange-500" },
-  { id: 13, category: "Investissement", title: "Investissez-vous déjà (Bourse, Crypto...) ?", description: "Impact : Onglet investissement intégré.", Icon: BarChart, color: "text-indigo-600" },
+  { id: 13, category: "Investissement", title: "Investissez-vous déjà (Bourse, Crypto) ?", description: "Impact : Onglet investissement intégré.", Icon: BarChart, color: "text-indigo-600" },
   { id: 14, category: "IA", title: "Une IA pour ajuster vos plafonds ?", description: "Impact : Automatisation selon vos habitudes.", Icon: Zap, color: "text-yellow-500" },
-  { id: 15, category: "Support", title: "Avez-vous vraiment besoins d'un conseillez quotidient?", description: "Impact : Self-care vs Support Premium.", Icon: Headphones, color: "text-slate-600" },
+  { id: 15, category: "Support", title: "Autonomie totale ou conseiller dédié ?", description: "Impact : Self-care vs Support Premium.", Icon: Headphones, color: "text-slate-600" },
   { id: 16, category: "Design", title: "Une carte physique au design exclusif ?", description: "Impact : Hardware (ex: Carte Métal).", Icon: Shield, color: "text-slate-800" }
 ];
 
@@ -88,7 +88,7 @@ const generateChatScript = (answers) => {
 
   if (answeredYes(0)) {
     script.push({
-      bot: "Tu m'as dis que tu aimes voyager. Tu voyages beaucoups ?",
+      bot: "Tu m'as dis que tu aimes voyager. Tu voyages beaucoup ?",
       delay: 1500,
       options: [
         "Ca va 🌍 (plus de 5 fois /an)", 
@@ -102,8 +102,8 @@ const generateChatScript = (answers) => {
     bot: "Comment souhaitez-vous piloter votre compte au quotidien ?",
     delay: 1500,
     options: [
-      "Je préfère tous gérer ♟️", 
-      "Moi et l'IA on collabore ensemble 🏖️", 
+      "Je préfère tout gérer ♟️", 
+      "Moi et l'IA on collabore 🏖️", 
       "L'IA doit tout faire 🛡️"
     ]
   });
@@ -161,26 +161,27 @@ const generateChatScript = (answers) => {
 const determineProfile = (answers) => {
   const isYes = (index) => answers[index] === 'right';
 
-  // 1. L’Explorateur : Voyage (0) = OUI + Mobile Pay (2) = OUI
   if (isYes(0) && isYes(2)) return "L'EXPLORATEUR";
-  
-  // 2. Le Pilote : Freelance/Pro (3) = OUI + Plafonds élevés (4) = OUI
   if (isYes(3) && isYes(4)) return "LE PILOTE";
-  
-  // 3. Le Stratège : Épargne (10) = OUI + Investissement (12) = OUI
   if (isYes(10) && isYes(12)) return "LE STRATÈGE";
-  
-  // 4. Le Gardien : Achats Web (1) = OUI + Sécurité (5) = OUI
   if (isYes(1) && isYes(5)) return "LE GARDIEN";
-  
-  // 5. Le Serein : IA (13) = OUI
   if (isYes(13)) return "LE SEREIN";
 
-  // Profil par défaut si aucune combinaison spécifique n'est trouvée
   return "LE SWAGMAN";
 };
 
 // --- COMPONENTS ---
+
+// Le PhoneMockup devient 100% sans bordure sur mobile, et retrouve son cadre sur les écrans "sm" et supérieurs
+const PhoneMockup = ({ children }) => (
+  <div className="w-full h-[100dvh] sm:w-[340px] sm:h-[700px] bg-gray-50 sm:border-[10px] sm:border-gray-900 sm:rounded-[3rem] sm:shadow-2xl overflow-hidden flex flex-col relative transition-all duration-300">
+    {/* Encoche visible uniquement sur ordinateur */}
+    <div className="hidden sm:flex absolute top-0 inset-x-0 h-6 justify-center z-50 pointer-events-none">
+      <div className="w-24 h-5 bg-gray-900 rounded-b-2xl"></div>
+    </div>
+    {children}
+  </div>
+);
 
 const SwipeCard = ({ card, onSwipe }) => {
   const [dragOffset, setDragOffset] = useState(0);
@@ -230,7 +231,22 @@ const SwipeCard = ({ card, onSwipe }) => {
   const { Icon, color } = card;
 
   return (
-    <div className="flex-1 relative flex flex-col pt-4 pb-safe select-none">
+    // Suppression du "relative" ici pour que le absolute de la lueur s'accroche directement au PhoneMockup et prenne tout l'écran
+    <div className="flex-1 flex flex-col pt-4 pb-safe select-none">
+      
+      {/* Lueur rouge (Non) - Accrochée aux bords avec top-0 et bottom-0 pour prendre toute la hauteur */}
+      <div 
+        className="absolute top-0 bottom-0 left-0 w-32 sm:w-40 bg-gradient-to-r from-red-500/15 to-transparent pointer-events-none z-0 transition-opacity duration-150"
+        style={{ opacity: noOpacity * 0.8 }}
+      />
+      
+      {/* Lueur verte (Oui) - Accrochée aux bords avec top-0 et bottom-0 pour prendre toute la hauteur */}
+      <div 
+        className="absolute top-0 bottom-0 right-0 w-32 sm:w-40 bg-gradient-to-l from-green-500/15 to-transparent pointer-events-none z-0 transition-opacity duration-150"
+        style={{ opacity: yesOpacity * 0.8 }}
+      />
+
+      {/* Reste du contenu qui garde son z-index pour rester au dessus */}
       <div className="flex-1 relative flex items-center justify-center px-6 z-20">
         <div 
           className="w-full h-full max-h-[450px] bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex flex-col p-8 cursor-grab active:cursor-grabbing relative overflow-hidden border border-gray-100"
@@ -262,7 +278,7 @@ const SwipeCard = ({ card, onSwipe }) => {
         </div>
       </div>
 
-      <div className="pt-8 px-10 pb-6 flex justify-between items-center z-10">
+      <div className="pt-8 px-10 pb-6 flex justify-between items-center relative z-10">
         <button onClick={() => triggerLeave('left')} className="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors border border-gray-100 active:scale-95">
           <X className="w-8 h-8" strokeWidth={3} />
         </button>
@@ -274,7 +290,6 @@ const SwipeCard = ({ card, onSwipe }) => {
   );
 };
 
-// --- CHATBOT SCREEN ---
 const ChatScreen = ({ answers, onComplete }) => {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -324,7 +339,7 @@ const ChatScreen = ({ answers, onComplete }) => {
 
   return (
     <div className="flex flex-col h-full bg-gray-50 z-40 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
-      <div className="pt-safe pb-4 px-6 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm z-10 flex flex-col items-center">
+      <div className="pt-safe pb-4 px-6 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm z-10 flex flex-col items-center sm:pt-14">
         <div className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center mb-2 shadow-md">
           <Bot className="w-5 h-5" />
         </div>
@@ -377,13 +392,12 @@ const ChatScreen = ({ answers, onComplete }) => {
   );
 };
 
-// --- END SCREEN ---
 const EndScreen = ({ answers, onReset }) => {
   const theme = useMemo(() => themes[Math.floor(Math.random() * themes.length)], []);
   const profileName = useMemo(() => determineProfile(answers), [answers]);
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 animate-in fade-in slide-in-from-bottom-4 duration-700 p-6 pt-safe pb-safe z-50">
+    <div className="flex flex-col h-full bg-gray-50 animate-in fade-in slide-in-from-bottom-4 duration-700 p-6 pt-safe pb-safe z-50 sm:pt-16">
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto">
         <h1 className="text-2xl font-extrabold text-slate-800 text-center mb-8 tracking-tight leading-tight">
           Ma carte<br />Mon expérience
@@ -469,37 +483,67 @@ export default function App() {
     setAnswers([]);
   };
 
-  const progressPercent = Math.min((currentIndex / questions.length) * 100, 100);
+  // Logique de progression personnalisée
+  const getProgressPercent = (index) => {
+    if (index <= 3) {
+      // De 0 à 3 questions répondues : la barre monte jusqu'à 35%
+      return (index / 3) * 35;
+    } else if (index <= 11) {
+      // De la 4ème à la 12ème question (index 11) : la barre monte de 35% à 80%
+      return 35 + ((index - 3) / 8) * (80 - 35);
+    } else {
+      // Fin du questionnaire : on va de 80% à 100%
+      const remaining = questions.length - 11;
+      return 80 + ((index - 11) / remaining) * (100 - 80);
+    }
+  };
+
+  const progressPercent = getProgressPercent(currentIndex);
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: customStyles }} />
-      {/* Conteneur principal qui s'adapte à tout l'écran */}
-      <div className="bg-gray-200 min-h-screen font-sans flex justify-center">
+      {/* Conteneur principal centré */}
+      <div className="bg-gray-200 min-h-[100dvh] w-full flex items-center justify-center font-sans overflow-hidden sm:overflow-auto">
         
-        {/* L'application prend tout l'écran sur mobile, mais est contrainte et centrée sur un grand écran de PC */}
-        <div className="w-full max-w-md h-[100dvh] bg-gray-50 flex flex-col relative overflow-hidden sm:shadow-2xl sm:border-x border-gray-200">
+        <PhoneMockup>
           
           {phase === 'swipe' && questions[currentIndex] && (
             <>
-              {/* Le header utilise "pt-safe" pour ne pas être caché sous l'encoche des téléphones */}
-              <div className="pt-safe pb-2 px-6 relative z-30">
-                <div className="flex items-center justify-between gap-4 mb-4">
-                  <button 
-                    onClick={handleBack}
-                    disabled={currentIndex === 0}
-                    className={`p-1.5 rounded-full transition-colors ${currentIndex === 0 ? 'text-gray-300' : 'text-gray-900 hover:bg-gray-100'}`}
-                  >
-                    <ChevronLeft className="w-6 h-6" strokeWidth={2.5} />
-                  </button>
+              <div className="pt-safe sm:pt-12 pb-2 px-6 relative z-30">
+                {/* Refonte du header :
+                  - Conteneur w-14 à gauche pour la flèche 
+                  - flex-1 pour la barre au centre
+                  - Conteneur w-14 à droite pour le bouton Passer
+                */}
+                <div className="flex items-center justify-between gap-3 mb-4 mt-2">
+                  <div className="w-14 flex justify-start">
+                    <button 
+                      onClick={handleBack}
+                      disabled={currentIndex === 0}
+                      className={`p-1.5 rounded-full transition-colors ${currentIndex === 0 ? 'text-gray-300' : 'text-gray-900 hover:bg-gray-100'}`}
+                    >
+                      <ChevronLeft className="w-6 h-6" strokeWidth={2.5} />
+                    </button>
+                  </div>
+
                   <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-gray-900 transition-all duration-300 ease-out"
                       style={{ width: `${progressPercent}%` }}
                     />
                   </div>
-                  <div className="w-9"></div> 
+
+                  <div className="w-14 flex justify-end">
+                    <button 
+                      onClick={() => handleSwipe('skip')}
+                      className="text-[11px] font-bold text-gray-400 hover:text-gray-800 transition-colors uppercase tracking-wider"
+                    >
+                      Passer
+                    </button>
+                  </div>
                 </div>
+                
                 <div className="text-center mt-2">
                   <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
                     {questions[currentIndex]?.category}
@@ -523,7 +567,8 @@ export default function App() {
             <EndScreen answers={answers} onReset={handleReset} />
           )}
 
-        </div>
+        </PhoneMockup>
+
       </div>
     </>
   );
